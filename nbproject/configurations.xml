@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="100">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+      <df name="src">
+        <in>main.ino</in>
+      </df>
+      <in>platformio.ini</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>nbproject/private/launcher.properties</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject|.pio)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile></projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <codeAssistance>
+        <includeAdditional>true</includeAdditional>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>/home/marek/.local/bin/pio -f -c netbeans run</buildCommand>
+          <cleanCommand>/home/marek/.local/bin/pio -f -c netbeans run --target clean</cleanCommand>
+          <executablePath></executablePath>
+          <cTool>
+            <incDir>
+              <pElem>src</pElem>
+              <pElem>/home/marek/NetBeansProjects/NanoEvery/include</pElem>
+              <pElem>/home/marek/NetBeansProjects/NanoEvery/src</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/cores/arduino/api/deprecated</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/cores/arduino</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/variants/nona4809</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/libraries/EEPROM/src</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/libraries/HID/src</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/libraries/SPI/src</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/libraries/SoftwareSerial/src</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/libraries/Wire/src</pElem>
+              <pElem>/home/marek/.platformio/packages/toolchain-atmelavr/lib/gcc/avr/7.3.0/include-fixed</pElem>
+              <pElem>/home/marek/.platformio/packages/toolchain-atmelavr/lib/gcc/avr/7.3.0/include</pElem>
+              <pElem>/home/marek/.platformio/packages/toolchain-atmelavr/avr/include</pElem>
+              <pElem>/home/marek/.platformio/packages/tool-unity</pElem>
+            </incDir>
+            <preprocessorList>
+              <Elem>ARDUINO=10808</Elem>
+              <Elem>ARDUINO_ARCH_MEGAAVR</Elem>
+              <Elem>ARDUINO_AVR_NANO_EVERY</Elem>
+              <Elem>AVR_NANO_4809_328MODE</Elem>
+              <Elem>F_CPU=16000000L</Elem>
+              <Elem>MILLIS_USE_TIMERB3</Elem>
+              <Elem>NO_EXTERNAL_I2C_PULLUP</Elem>
+              <Elem>PLATFORMIO=50004</Elem>
+              <Elem>USB_MANUFACTURER="Arduino"</Elem>
+              <Elem>USB_PID=0x0058</Elem>
+              <Elem>USB_PRODUCT="Arduino Nano Every"</Elem>
+              <Elem>USB_VID=0x2341</Elem>
+            </preprocessorList>
+          </cTool>
+          <ccTool>
+            <incDir>
+              <pElem>src</pElem>
+              <pElem>/home/marek/NetBeansProjects/NanoEvery/include</pElem>
+              <pElem>/home/marek/NetBeansProjects/NanoEvery/src</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/cores/arduino/api/deprecated</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/cores/arduino</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/variants/nona4809</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/libraries/EEPROM/src</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/libraries/HID/src</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/libraries/SPI/src</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/libraries/SoftwareSerial/src</pElem>
+              <pElem>/home/marek/.platformio/packages/framework-arduino-megaavr/libraries/Wire/src</pElem>
+              <pElem>/home/marek/.platformio/packages/toolchain-atmelavr/lib/gcc/avr/7.3.0/include-fixed</pElem>
+              <pElem>/home/marek/.platformio/packages/toolchain-atmelavr/lib/gcc/avr/7.3.0/include</pElem>
+              <pElem>/home/marek/.platformio/packages/toolchain-atmelavr/avr/include</pElem>
+              <pElem>/home/marek/.platformio/packages/tool-unity</pElem>
+            </incDir>
+            <preprocessorList>
+              <Elem>ARDUINO=10808</Elem>
+              <Elem>ARDUINO_ARCH_MEGAAVR</Elem>
+              <Elem>ARDUINO_AVR_NANO_EVERY</Elem>
+              <Elem>AVR_NANO_4809_328MODE</Elem>
+              <Elem>F_CPU=16000000L</Elem>
+              <Elem>MILLIS_USE_TIMERB3</Elem>
+              <Elem>NO_EXTERNAL_I2C_PULLUP</Elem>
+              <Elem>PLATFORMIO=50004</Elem>
+              <Elem>USB_MANUFACTURER="Arduino"</Elem>
+              <Elem>USB_PID=0x0058</Elem>
+              <Elem>USB_PRODUCT="Arduino Nano Every"</Elem>
+              <Elem>USB_VID=0x2341</Elem>
+            </preprocessorList>
+          </ccTool>
+        </makeTool>
+        <preBuild>
+          <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>
+          <preBuildCommand></preBuildCommand>
+        </preBuild>
+      </makefileType>
+      <item path="platformio.ini" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/main.ino" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
