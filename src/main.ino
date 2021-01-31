@@ -32,7 +32,7 @@
 #define ALARM_BUZZER_FREQ_MAX 700
 
 /* I2C addresses */
-#define EEPROM_ADDRESS 0b1010001
+#define EEPROM_ADDRESS 0b1010000
 
 /* enums */
 enum BUTTON {
@@ -62,7 +62,7 @@ void mode_alarm_clock(BUTTON);
 void update_temp_humi();
 void change_to_main_mode();
 void change_red_led_state();
-void get_time_from_user(unsigned *, unsigned *, char = ':', int = 23, int = 59);
+void get_time_from_user(unsigned *, unsigned *, char = ':', int = 23, int = 59, unsigned = 0, unsigned = 0);
 void get_seconds_from_user(unsigned *, unsigned = 5, int = 59, unsigned = 0);
 void get_date_from_user(unsigned *, unsigned *);
 void get_year_from_user(unsigned *, unsigned *);
@@ -133,18 +133,17 @@ void setup()
     {
         alarms_complete[i] = false;
         
-        byte data[3];
+        // byte data[3];
+        byte hour, minute, on;
         
-        eeprom.read(3 * i, data, 3);
+        eeprom.read(3 * i + 0, &hour);
+        eeprom.read(3 * i + 1, &minute);
+        eeprom.read(3 * i + 2, &on);
         delay(10);
         
-        Serial.println(data[0]);
-        Serial.println(data[1]);
-        Serial.println(data[2]);
-        
-        alarms[i][0] = static_cast<unsigned>(data[0]);
-        alarms[i][1] = static_cast<unsigned>(data[1]);
-        alarms_on[i] = static_cast<bool>(data[2]);
+        alarms[i][0] = static_cast<unsigned>(hour);
+        alarms[i][1] = static_cast<unsigned>(minute);
+        alarms_on[i] = static_cast<bool>(on);
     }
 }
 
@@ -445,12 +444,47 @@ void mode_set_time(BUTTON pressed_button)
 
 void mode_alarm_clock(BUTTON pressed_button)
 {
+    
+    static int selected_alarm = 0;
+    
+    if (pressed_button == PLUS || pressed_button == MINUS)
+    {
+        int val = (pressed_button == MINUS ? -1 : +1);
+        selected_alarm += val;
+        if (selected_alarm < 0 || selected_alarm >= NUM_OF_ALARMS)
+            selected_alarm -= val;
+    }
+    else if (pressed_button == NEXT)
+    {
+        turn_alarm(selected_alarm);
+    }
+    else if (pressed_button == OK_EDIT)
+    {
+        unsigned hour, minute;
+        
+        delay(BUTTON_TIMEOUT);
+        
+        oled.clear();
+        get_time_from_user(&hour, &minute, ':', 23, 59, alarms[selected_alarm][0], alarms[selected_alarm][1]);
+        oled.clear();
+        
+        alarms[selected_alarm][0] = hour;
+        alarms[selected_alarm][1] = minute;
+        
+        eeprom.update(3 * selected_alarm + 0, hour);
+        eeprom.update(3 * selected_alarm + 1, minute);
+    }
+    
     oled.setFont(u8x8_font_7x14B_1x2_r);
     oled.setCursor(0, 1);
     
     for (size_t i = 0; i < NUM_OF_ALARMS; i++)
     {
         oled.print(" ");
+        
+        if (selected_alarm == i)
+            oled.inverse();
+        
         if (alarms[i][0] < 10)
             oled.print("0");
         oled.print(alarms[i][0]);
@@ -461,8 +495,17 @@ void mode_alarm_clock(BUTTON pressed_button)
             oled.print("0");
         oled.print(alarms[i][1]);
         
+        if (selected_alarm == i)
+            oled.noInverse();
+        
         oled.print("  ");
+        
+        if (selected_alarm == i)
+            oled.inverse();
         oled.print(alarms_on[i] ? "ON" : "OFF");
+        if (selected_alarm == i)
+            oled.noInverse();
+        
         oled.print(" \n");
     }
 }
@@ -483,10 +526,10 @@ inline void change_red_led_state()
     led_red_state = ! led_red_state;
 }
 
-void get_time_from_user(unsigned * hour, unsigned * minute, char colon, int max1, int max2)
+void get_time_from_user(unsigned * hour, unsigned * minute, char colon, int max1, int max2, unsigned start_hour, unsigned start_minute)
 {
-    int tmp_hour = 0;
-    int tmp_minute = 0;
+    int tmp_hour = start_hour;
+    int tmp_minute = start_minute;
     
     int edit_mode = 1;
     /*
@@ -515,14 +558,22 @@ void get_time_from_user(unsigned * hour, unsigned * minute, char colon, int max1
             if (edit_mode == 1)
             {
                 tmp_hour += val;
-                if (tmp_hour < 0 || tmp_hour > max1)
-                    tmp_hour -= val;
+                
+                if (tmp_hour < 0)
+                    tmp_hour = max1;
+                
+                if (tmp_hour > max1)
+                    tmp_hour = 0;
             }
             else /* if (edit_mode == 2) */
             {
                 tmp_minute += val;
-                if (tmp_minute < 0 || tmp_minute > max2)
-                    tmp_minute -= val;
+                
+                if (tmp_minute < 0)
+                    tmp_minute = max2;
+                
+                if (tmp_minute > max2)
+                    tmp_minute = 0;
             }
         }
             
@@ -744,4 +795,13 @@ void call_alarm()
             }
         }
     }
+}
+
+inline void turn_alarm(int alarm)
+{
+    bool new_state = ! alarms_on[alarm];
+    alarms_on[alarm] = new_state;
+    byte new_eeprom_state = static_cast<byte>(new_state);
+    Serial.println(eeprom.update(3 * alarm + 2, new_eeprom_state));
+    delay(10);
 }
