@@ -134,7 +134,6 @@ void loop()
     secondary_display.set_number(rtc.minute, 1);
     secondary_display.refresh_display();
     
-    change_red_led_state();
     if (pressed_button != NONE)
     {
         digitalWrite(GREEN_LED, LOW);
@@ -237,28 +236,48 @@ void mode_main(BUTTON pressed_button)
     /* print time and date to the oled display */
     oled.setFont(u8x8_font_profont29_2x3_r);
     oled.setCursor(0, 0);
+    /* print hours */
+    if (rtc.hour < 10)
+        oled.print("0");
     oled.print(rtc.hour);
+    
     oled.print(":");
-    if (rtc.minute < 9)
+    
+    /* print minutes */
+    if (rtc.minute < 10)
         oled.print("0");
     oled.print(rtc.minute);
 
     oled.setFont(u8x8_font_7x14B_1x2_r);
     oled.setCursor(10, 1);
+    /* print seconds */
     oled.print(":");
-    if (rtc.second < 9)
+    if (rtc.second < 10)
         oled.print("0");
     oled.print(rtc.second);
     oled.print(" ");
 
+    /* print date */
     oled.setCursor(1, 3);
+    
+    /* print dayOfMonth */
+    if (rtc.dayOfMonth < 10)
+        oled.print("0");
     oled.print(rtc.dayOfMonth);
+    
     oled.print("/");
-    if (rtc.second < 9)
+    
+    /* print month */
+    if (rtc.month < 10)
         oled.print("0");
     oled.print(rtc.month);
+    
+    /* print year */
     oled.print("/");
     oled.print(rtc.year + 2000);
+    
+    oled.print("  ");
+    oled.print(rtc.dayOfWeek);
     
     /* print temp and humi to the oled display */
     oled.setCursor(1, 6);
