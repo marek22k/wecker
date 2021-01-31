@@ -51,6 +51,8 @@
         </df>
         <in>DHT.cpp</in>
         <in>DHT.h</in>
+        <in>DS1307.cpp</in>
+        <in>DS1307.h</in>
         <in>PCF85063TP.cpp</in>
         <in>PCF85063TP.h</in>
         <in>TM1637Display.cpp</in>

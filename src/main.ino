@@ -3,7 +3,7 @@
 
 #include "TM1637Display.h"
 #include "segment_display.hpp"
-#include "PCF85063TP.h"
+#include "DS1307.h"
 #include "eeprom_24c256.hpp"
 #include "DHT.h"
 #include "U8x8lib.h"
@@ -70,7 +70,7 @@ bool led_red_state = false;
 /* objects */
 TM1637Display tm1637_display(SEGMENT_DISPLAY_CLK, SEGMENT_DISPLAY_DIO);
 segment_display secondary_display(&tm1637_display, 88, 88, 0, true);
-PCD85063TP rtc;
+DS1307 rtc;
 eeprom_24c256 eeprom(EEPROM_ADDRESS);
 DHT dht(TEMP_HUMI, DHT11);
 U8X8_SSD1306_128X64_NONAME_HW_I2C oled(U8X8_PIN_NONE);
@@ -289,7 +289,7 @@ void mode_main(BUTTON pressed_button)
     
     /* print year */
     oled.print("/");
-    oled.print(rtc.year + 1951);
+    oled.print(rtc.year + 2000);
     
     /* print dayOfWeek */
     oled.print(" ");
@@ -378,7 +378,7 @@ void mode_set_time(BUTTON pressed_button)
         
         if (static_cast<int>(year) - 2000 < 0)
             year = 0;
-        year -= 2000;
+        //year -= 2000;
         
         if (mon == 0)
             mon = 1;
@@ -386,21 +386,17 @@ void mode_set_time(BUTTON pressed_button)
         if (day == 0)
             day = 1;
         
-        rtc.stopClock();
-        delay(10);
-        rtc.fillByYMD(year, mon, day);
-        delay(10);
-        rtc.fillByHMS(hour, minute, seconds);
-        delay(10);
-        rtc.fillDayOfWeek(day_of_week);
-        delay(10);
-        
         oled.setFont(u8x8_font_7x14B_1x2_r);
         oled.setCursor(0, 1);
-        oled.print("  Should the\n    time be\n   set now?");
+        oled.print("   Should the\n    time be\n    set now?");
         while(read_buttons() == NONE);
-        rtc.startClock();
-        delay(10);
+        
+        //rtc.stopClock();
+        rtc.fillByYMD(year, mon, day);
+        rtc.fillByHMS(hour, minute, seconds);
+        rtc.fillDayOfWeek(day_of_week);
+        rtc.setTime();
+        //rtc.startClock();
         
         oled.clear();
     }
@@ -566,7 +562,7 @@ void get_day_from_user(unsigned * day)
         {
             unsigned val = (pressed_button == MINUS ? -1 : +1);
             tmp_day += val;
-            if (tmp_day < 0 || tmp_day > 6)
+            if (tmp_day < 0 || tmp_day > 7)
                 tmp_day -= val;
         }
             
