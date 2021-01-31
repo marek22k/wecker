@@ -53,8 +53,6 @@
         <in>DHT.h</in>
         <in>DS1307.cpp</in>
         <in>DS1307.h</in>
-        <in>PCF85063TP.cpp</in>
-        <in>PCF85063TP.h</in>
         <in>TM1637Display.cpp</in>
         <in>TM1637Display.h</in>
         <in>U8x8lib.cpp</in>
