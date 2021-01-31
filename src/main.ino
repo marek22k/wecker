@@ -21,6 +21,8 @@
 #define GREEN_LED 13
 #define RED_LED 2
 
+#define BUTTON_TIMEOUT 500
+
 /* I2C addresses */
 #define EEPROM_ADDRESS 0b1010001
 
@@ -38,14 +40,24 @@ enum UNIT_OF_TEMPERATURE {
     CELSIUS, FAHRENHEIT, KELVIN
 };
 
+enum TIME_EDIT {
+    HOUR, MINUTE, COMPLETE
+};
+
 /* functions */
 BUTTON read_buttons();
 void next_mode();
 void next_temperature_unit();
 void mode_main(BUTTON);
+void mode_set_time(BUTTON);
 void update_temp_humi();
 void change_to_main_mode();
 void change_red_led_state();
+void get_time_from_user(unsigned *, unsigned *, char = ':', int = 23, int = 59);
+void get_seconds_from_user(unsigned *, unsigned = 5, int = 59, unsigned = 0);
+void get_date_from_user(unsigned *, unsigned *);
+void get_year_from_user(unsigned *, unsigned *);
+void get_day_from_user(unsigned *);
 
 /* variables */
 MODE current_mode = MAIN;
@@ -102,7 +114,7 @@ void setup()
 }
 
 void loop()
-{
+{get_day_from_user(NULL);
     BUTTON pressed_button = read_buttons();
     
     if (pressed_button != NONE)
@@ -129,6 +141,10 @@ void loop()
     {
         mode_main(pressed_button);
     }
+    else if (current_mode == SET_TIME)
+    {
+        mode_set_time(pressed_button);
+    }
     
     secondary_display.set_number(rtc.hour, 0);
     secondary_display.set_number(rtc.minute, 1);
@@ -138,7 +154,7 @@ void loop()
     {
         digitalWrite(GREEN_LED, LOW);
         unsigned long timestamp = millis();
-        while ( (millis() - timestamp) <= 500)
+        while ( (millis() - timestamp) <= BUTTON_TIMEOUT)
         {
             /* code while wait */
         }
@@ -211,7 +227,6 @@ void mode_main(BUTTON pressed_button)
     if (pressed_button == PLUS || pressed_button == MINUS)
     {
         /* Dimming the display */
-        Serial.println(pressed_button);
         uint8_t light = secondary_display.get_light();
         light += (pressed_button == MINUS ? -1 : +1);
         if ( ! (light > 7) )
@@ -328,6 +343,48 @@ void mode_main(BUTTON pressed_button)
     oled.print(" ");
 }
 
+void mode_set_time(BUTTON pressed_button)
+{
+    oled.setFont(u8x8_font_7x14B_1x2_r);
+    oled.setCursor(0, 1);
+    oled.print(" Would you like\n  to set the\n    clock?");
+    
+    if (pressed_button == OK_EDIT)
+    {
+        unsigned hour;
+        unsigned minute;
+        unsigned seconds;
+        unsigned day_of_week = 0;
+        unsigned mon;
+        unsigned day;
+        unsigned year;
+        
+        oled.clear();
+        get_time_from_user(&hour, &minute);
+        
+        oled.clear();
+        get_seconds_from_user(&seconds);
+        
+        oled.clear();
+        get_day_from_user(&day_of_week);
+        
+        oled.clear();
+        get_date_from_user(&mon, &day);
+        
+        oled.clear();
+        get_year_from_user(&year);
+        
+        oled.clear();
+        
+        Serial.println(hour);
+        Serial.println(minute);
+        Serial.println(seconds);
+        Serial.println(mon);
+        Serial.println(day);
+        Serial.println(year);
+    }
+}
+
 inline void update_temp_humi()
 {
     dht.readTempAndHumidity(dht_result);
@@ -342,4 +399,132 @@ inline void change_red_led_state()
 {
     digitalWrite(RED_LED, (led_red_state ? HIGH : LOW));
     led_red_state = ! led_red_state;
+}
+
+void get_time_from_user(unsigned * hour, unsigned * minute, char colon, int max1, int max2)
+{
+    int tmp_hour = 0;
+    int tmp_minute = 0;
+    
+    int edit_mode = 1;
+    /*
+     * -1 = complete
+     * 1 = hour
+     * 2 = minute
+     */
+    
+    oled.setFont(u8x8_font_profont29_2x3_r);
+    
+    while (edit_mode != -1)
+    {
+        BUTTON pressed_button = read_buttons();
+        
+        if (pressed_button == NEXT)
+        {
+            edit_mode = (edit_mode == 1 ? 2 : 1);
+        }
+        else if (pressed_button == OK_EDIT)
+        {
+            edit_mode = -1;
+        }
+        else if (pressed_button == PLUS || pressed_button == MINUS)
+        {
+            unsigned val = (pressed_button == MINUS ? -1 : +1);
+            if (edit_mode == 1)
+            {
+                tmp_hour += val;
+                if (tmp_hour < 0 || tmp_hour > max1)
+                    tmp_hour -= val;
+            }
+            else /* if (edit_mode == 2) */
+            {
+                tmp_minute += val;
+                if (tmp_minute < 0 || tmp_minute > max2)
+                    tmp_minute -= val;
+            }
+        }
+            
+        oled.setCursor(3, 2);
+        if (edit_mode == 1)
+            oled.inverse();
+        
+        if (tmp_hour < 10)
+            oled.print("0");
+        oled.print(tmp_hour);
+        
+        if (edit_mode == 1)
+            oled.noInverse();
+        
+        oled.print(colon);
+        
+        if (edit_mode == 2)
+            oled.inverse();
+        
+        if (tmp_minute < 10)
+            oled.print("0");
+        oled.print(tmp_minute);
+        
+        if (edit_mode == 2)
+            oled.noInverse();
+        
+        if (pressed_button != NONE)
+            delay(BUTTON_TIMEOUT);
+    }
+    
+    * hour = tmp_hour;
+    * minute = tmp_minute;
+}
+
+void get_seconds_from_user(unsigned * seconds, unsigned startpos, int max, unsigned startval)
+{
+    int tmp_seconds = startval;
+    
+    bool complete = false;
+    
+    oled.setFont(u8x8_font_profont29_2x3_r);
+    
+    oled.inverse();
+    while (! complete)
+    {
+        BUTTON pressed_button = read_buttons();
+        
+        if (pressed_button == OK_EDIT)
+        {
+            complete = true;
+        }
+        else if (pressed_button == PLUS || pressed_button == MINUS)
+        {
+            unsigned val = (pressed_button == MINUS ? -1 : +1);
+            tmp_seconds += val;
+            if (tmp_seconds < 0 || tmp_seconds > max)
+                tmp_seconds -= val;
+        }
+            
+        oled.setCursor(startpos, 2);
+        
+        if (tmp_seconds < 10)
+            oled.print("0");
+        oled.print(tmp_seconds);
+        
+        if (pressed_button != NONE)
+            delay(BUTTON_TIMEOUT);
+    }
+    oled.noInverse();
+    
+    * seconds = tmp_seconds;
+}
+
+inline void get_year_from_user(unsigned * year)
+{
+    get_seconds_from_user(year, 3, 9999, 2000);
+}
+
+inline void get_date_from_user(unsigned * mon, unsigned * day)
+{
+    get_time_from_user(mon, day, '/', 12, 31);
+}
+
+void get_day_from_user(unsigned *)
+{
+    
 }
