@@ -276,8 +276,33 @@ void mode_main(BUTTON pressed_button)
     oled.print("/");
     oled.print(rtc.year + 2000);
     
-    oled.print("  ");
-    oled.print(rtc.dayOfWeek);
+    /* print dayOfWeek */
+    oled.print(" ");
+    switch(rtc.dayOfWeek)
+    {
+        case MON:
+            oled.print("MON");
+            break;
+        case TUE:
+            oled.print("TUE");
+            break;
+        case WED:
+            oled.print("WED");
+            break;
+        case THU:
+            oled.print("THU");
+            break;
+        case FRI:
+            oled.print("FRI");
+            break;
+        case SAT:
+            oled.print("SAT");
+            break;
+        case SUN:
+            oled.print("SUN");
+            break;
+    }
+    
     
     /* print temp and humi to the oled display */
     oled.setCursor(1, 6);
