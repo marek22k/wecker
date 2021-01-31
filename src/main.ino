@@ -18,7 +18,7 @@
 
 #define TEMP_HUMI A3
 
-#define GREEN_LED 13
+#define GREEN_LED 4
 #define RED_LED 2
 
 #define BUZZER 3
@@ -64,14 +64,14 @@ void change_to_main_mode();
 void change_red_led_state();
 void get_time_from_user(unsigned *, unsigned *, char = ':', int = 23, int = 59, unsigned = 0, unsigned = 0);
 void get_seconds_from_user(unsigned *, unsigned = 5, int = 59, unsigned = 0);
-void get_date_from_user(unsigned *, unsigned *);
-void get_year_from_user(unsigned *, unsigned *);
-void get_day_from_user(unsigned *);
+void get_date_from_user(unsigned *, unsigned *, unsigned = 0, unsigned = 0);
+void get_year_from_user(unsigned *, unsigned = 2000);
+void get_day_from_user(unsigned *, unsigned = MON);
 void check_alarms();
 void call_alarm();
 
 /* variables */
-MODE current_mode = ALARM_CLOCK; //MAIN;
+MODE current_mode = MAIN;
 UNIT_OF_TEMPERATURE unit_for_temperature = CELSIUS;
 float dht_result[2] = {0, 0};
 unsigned long th_update_intervall = 500;  /* temp humi update intervall */
@@ -399,20 +399,22 @@ void mode_set_time(BUTTON pressed_button)
         unsigned day;
         unsigned year;
         
-        oled.clear();
-        get_time_from_user(&hour, &minute);
+        rtc.getTime();
         
         oled.clear();
-        get_seconds_from_user(&seconds);
+        get_time_from_user(&hour, &minute, ':', 23, 59, rtc.hour, rtc.minute);
         
         oled.clear();
-        get_day_from_user(&day_of_week);
+        get_seconds_from_user(&seconds, 5, 59, rtc.second);
         
         oled.clear();
-        get_date_from_user(&mon, &day);
+        get_day_from_user(&day_of_week, rtc.dayOfWeek);
         
         oled.clear();
-        get_year_from_user(&year);
+        get_date_from_user(&mon, &day, rtc.month, rtc.dayOfMonth);
+        
+        oled.clear();
+        get_year_from_user(&year, rtc.year + 2000);
         
         oled.clear();
         
@@ -561,8 +563,7 @@ void get_time_from_user(unsigned * hour, unsigned * minute, char colon, int max1
                 
                 if (tmp_hour < 0)
                     tmp_hour = max1;
-                
-                if (tmp_hour > max1)
+                else if (tmp_hour > max1)
                     tmp_hour = 0;
             }
             else /* if (edit_mode == 2) */
@@ -571,8 +572,7 @@ void get_time_from_user(unsigned * hour, unsigned * minute, char colon, int max1
                 
                 if (tmp_minute < 0)
                     tmp_minute = max2;
-                
-                if (tmp_minute > max2)
+                else if (tmp_minute > max2)
                     tmp_minute = 0;
             }
         }
@@ -629,8 +629,11 @@ void get_seconds_from_user(unsigned * seconds, unsigned startpos, int max, unsig
         {
             unsigned val = (pressed_button == MINUS ? -1 : +1);
             tmp_seconds += val;
-            if (tmp_seconds < 0 || tmp_seconds > max)
-                tmp_seconds -= val;
+            
+            if (tmp_seconds < 0)
+                tmp_seconds = max;
+            else if (tmp_seconds > max)
+                tmp_seconds = 0;
         }
             
         oled.setCursor(startpos, 2);
@@ -647,19 +650,19 @@ void get_seconds_from_user(unsigned * seconds, unsigned startpos, int max, unsig
     * seconds = tmp_seconds;
 }
 
-inline void get_year_from_user(unsigned * year)
+inline void get_year_from_user(unsigned * year, unsigned startval)
 {
-    get_seconds_from_user(year, 3, 9999, 2000);
+    get_seconds_from_user(year, 3, 9999, startval);
 }
 
-inline void get_date_from_user(unsigned * mon, unsigned * day)
+inline void get_date_from_user(unsigned * mon, unsigned * day, unsigned startmon, unsigned startday)
 {
-    get_time_from_user(mon, day, '/', 12, 31);
+    get_time_from_user(mon, day, '/', 12, 31, startmon, startday);
 }
 
-void get_day_from_user(unsigned * day)
+void get_day_from_user(unsigned * day, unsigned startday)
 {
-    int tmp_day = 1;
+    int tmp_day = startday;
     
     bool complete = false;
     
@@ -678,8 +681,10 @@ void get_day_from_user(unsigned * day)
         {
             unsigned val = (pressed_button == MINUS ? -1 : +1);
             tmp_day += val;
-            if (tmp_day < 0 || tmp_day > 7)
-                tmp_day -= val;
+            if (tmp_day < MON)
+                tmp_day = SUN;
+            else if (tmp_day > SUN)
+                tmp_day = MON;
         }
             
         oled.setCursor(3, 2);
