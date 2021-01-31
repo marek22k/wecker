@@ -387,15 +387,20 @@ void mode_set_time(BUTTON pressed_button)
             day = 1;
         
         rtc.stopClock();
+        delay(10);
         rtc.fillByYMD(year, mon, day);
+        delay(10);
         rtc.fillByHMS(hour, minute, seconds);
+        delay(10);
         rtc.fillDayOfWeek(day_of_week);
+        delay(10);
         
         oled.setFont(u8x8_font_7x14B_1x2_r);
-        oled.setCursor(1, 0);
+        oled.setCursor(0, 1);
         oled.print("  Should the\n    time be\n   set now?");
         while(read_buttons() == NONE);
         rtc.startClock();
+        delay(10);
         
         oled.clear();
     }
