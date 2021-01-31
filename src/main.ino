@@ -124,6 +124,7 @@ void setup()
 
     oled.setBusClock(100000);
     oled.begin();
+    oled.setFlipMode(1);
     oled.setFont(u8x8_font_victoriamedium8_r);
     
     update_temp_humi();
@@ -801,6 +802,9 @@ void call_alarm()
             }
         }
     }
+    
+    oled.clear();
+    secondary_display.turn_on();
 }
 
 inline void turn_alarm(int alarm)
