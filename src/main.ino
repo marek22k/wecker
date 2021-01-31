@@ -114,7 +114,7 @@ void setup()
 }
 
 void loop()
-{get_day_from_user(NULL);
+{
     BUTTON pressed_button = read_buttons();
     
     if (pressed_button != NONE)
@@ -289,7 +289,7 @@ void mode_main(BUTTON pressed_button)
     
     /* print year */
     oled.print("/");
-    oled.print(rtc.year + 2000);
+    oled.print(rtc.year + 1951);
     
     /* print dayOfWeek */
     oled.print(" ");
@@ -376,12 +376,28 @@ void mode_set_time(BUTTON pressed_button)
         
         oled.clear();
         
-        Serial.println(hour);
-        Serial.println(minute);
-        Serial.println(seconds);
-        Serial.println(mon);
-        Serial.println(day);
-        Serial.println(year);
+        if (static_cast<int>(year) - 2000 < 0)
+            year = 0;
+        year -= 2000;
+        
+        if (mon == 0)
+            mon = 1;
+        
+        if (day == 0)
+            day = 1;
+        
+        rtc.stopClock();
+        rtc.fillByYMD(year, mon, day);
+        rtc.fillByHMS(hour, minute, seconds);
+        rtc.fillDayOfWeek(day_of_week);
+        
+        oled.setFont(u8x8_font_7x14B_1x2_r);
+        oled.setCursor(1, 0);
+        oled.print("  Should the\n    time be\n   set now?");
+        while(read_buttons() == NONE);
+        rtc.startClock();
+        
+        oled.clear();
     }
 }
 
@@ -524,7 +540,62 @@ inline void get_date_from_user(unsigned * mon, unsigned * day)
     get_time_from_user(mon, day, '/', 12, 31);
 }
 
-void get_day_from_user(unsigned *)
+void get_day_from_user(unsigned * day)
 {
+    int tmp_day = 1;
     
+    bool complete = false;
+    
+    oled.setFont(u8x8_font_profont29_2x3_r);
+    
+    oled.inverse();
+    while (! complete)
+    {
+        BUTTON pressed_button = read_buttons();
+        
+        if (pressed_button == OK_EDIT)
+        {
+            complete = true;
+        }
+        else if (pressed_button == PLUS || pressed_button == MINUS)
+        {
+            unsigned val = (pressed_button == MINUS ? -1 : +1);
+            tmp_day += val;
+            if (tmp_day < 0 || tmp_day > 6)
+                tmp_day -= val;
+        }
+            
+        oled.setCursor(3, 2);
+        
+        switch(tmp_day)
+        {
+            case MON:
+                oled.print("MON");
+                break;
+            case TUE:
+                oled.print("TUE");
+                break;
+            case WED:
+                oled.print("WED");
+                break;
+            case THU:
+                oled.print("THU");
+                break;
+            case FRI:
+                oled.print("FRI");
+                break;
+            case SAT:
+                oled.print("SAT");
+                break;
+            case SUN:
+                oled.print("SUN");
+                break;
+        }
+        
+        if (pressed_button != NONE)
+            delay(BUTTON_TIMEOUT);
+    }
+    oled.noInverse();
+    
+    * day = tmp_day;
 }
