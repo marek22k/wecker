@@ -194,10 +194,11 @@ void loop()
     {
         digitalWrite(GREEN_LED, LOW);
         unsigned long timestamp = millis();
-        while ( (millis() - timestamp) <= BUTTON_TIMEOUT)
-        {
-            /* code while wait */
-        }
+//        while ( (millis() - timestamp) <= BUTTON_TIMEOUT)
+//        {
+//            /* code while wait */
+//        }
+        delay(BUTTON_TIMEOUT);
     }
 }
 
@@ -724,7 +725,7 @@ void get_day_from_user(unsigned * day, unsigned startday)
 
 void check_alarms()
 {
-    for (size_t i = 0; i < 2; i++)
+    for (size_t i = 0; i < NUM_OF_ALARMS; i++)
     {
         if (alarms_on[i])
         {
@@ -734,7 +735,7 @@ void check_alarms()
                 alarms_complete[i] = true;
                 call_alarm();
             }
-            else if (rtc.hour == alarms[i][0] && rtc.minute == alarms[i][1] && alarms_complete[i] == true)
+            else if (rtc.hour != alarms[i][0] && rtc.minute != alarms[i][1] && alarms_complete[i] == true)
             {
                 alarms_complete[i] = false;
             }
@@ -756,7 +757,7 @@ void call_alarm()
         unsigned long timestamp = millis();
         
         /* Alarm on Oled */
-        oled.setCursor(1, 1);
+        oled.setCursor(3, 2);
         
         if (inverse)
             oled.inverse();
