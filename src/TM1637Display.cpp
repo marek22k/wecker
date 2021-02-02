@@ -59,12 +59,8 @@ const uint8_t digitToSegment[] = {
 static const uint8_t minusSegments = 0b01000000;
 
 TM1637Display::TM1637Display(uint8_t pinClk, uint8_t pinDIO, unsigned int bitDelay)
+    : m_pinClk(pinClk), m_pinDIO(pinDIO), m_bitDelay(bitDelay), m_brightness(0x08)
 {
-	// Copy the pin numbers
-	m_pinClk = pinClk;
-	m_pinDIO = pinDIO;
-	m_bitDelay = bitDelay;
-
 	// Set the pin direction and default value.
 	// Both pins are set as inputs, allowing the pull-up resistors to pull them up
     pinMode(m_pinClk, INPUT);

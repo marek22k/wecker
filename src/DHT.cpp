@@ -12,11 +12,10 @@ written by Adafruit Industries
 #else
 #define DEBUG_PRINT(...)
 #endif
-DHT::DHT(uint8_t pin, uint8_t type, uint8_t count) {
-  _pin = pin;
-  _type = type;
-  _count = count;
-  firstreading = true;
+DHT::DHT(uint8_t pin, uint8_t type, uint8_t count)
+    : _pin(pin), _type(type), _count(count), firstreading(true)
+{
+    
 }
 
 
@@ -45,8 +44,8 @@ void DHT::begin(void) {
 int DHT::readTempAndHumidity(float *data)
 {
     uint32_t target_val[2] = {0};
-    uint32_t cnt;
     if(_type == DHT10){
+        uint32_t cnt = 0;
       while(DHT10ReadStatus()==0)
       {
         DHT10Init();
@@ -80,9 +79,9 @@ int DHT::readTempAndHumidity(float *data)
 
 //boolean S == Scale.  True == Farenheit; False == Celcius
 float DHT::readTemperature(bool S) {
-  float f;
 
   if (read()) {
+      float f;
     switch (_type) {
     case DHT11:
       f = data[2];
@@ -113,8 +112,8 @@ float DHT::convertCtoF(float c) {
 }
 
 float DHT::readHumidity(void) {
-  float f;
   if (read()) {
+      float f;
     switch (_type) {
     case DHT11:
       f = data[0];
@@ -135,7 +134,7 @@ float DHT::readHumidity(void) {
 
 boolean DHT::read(void) {
   uint8_t laststate = HIGH;
-  uint8_t counter = 0;
+  // uint8_t counter = 0;
   uint8_t j = 0, i;
   unsigned long currenttime;
 
@@ -172,7 +171,7 @@ boolean DHT::read(void) {
 
   // read in timings
   for ( i=0; i< MAXTIMINGS; i++) {
-    counter = 0;
+    uint8_t counter = 0;
     while (digitalRead(_pin) == laststate) {
       counter++;
       delayMicroseconds(1);
@@ -227,10 +226,10 @@ boolean DHT::read(void) {
 int DHT::DHT10Reset(void)
 {
   if(_type == DHT10)
-	    return i2cWriteByte(RESET_REG_ADDR);
+      return i2cWriteByte(RESET_REG_ADDR);
   else{
-      return 0;
       SERIALPRINT.println("This function only support for DHT10");
+      return 0;
   } 
 
 }
@@ -243,16 +242,16 @@ int DHT::DHT10Reset(void)
 int DHT::DHT10ReadStatus(void)
 {
 
-	int ret = 0;
-	uint8_t statu = 0;
+	// int ret = 0;
   if(_type == DHT10){
-        ret = i2cReadByte(statu);
-	    if(ret)
-		    SERIALPRINT.println("Failed to read byte\n");
-	    if((statu & 0x8)==0x8)  
-  		  return 1;
-  	  else  
-	  	  return 0;
+	uint8_t statu = 0;
+        int ret = i2cReadByte(statu);
+        if(ret)
+            SERIALPRINT.println("Failed to read byte\n");
+        if((statu & 0x8)==0x8)
+            return 1;
+        else
+            return 0;
   }
   else{
         SERIALPRINT.println("This function only support for DHT10");
@@ -266,9 +265,11 @@ int DHT::DHT10ReadStatus(void)
  **/
 int DHT::setSystemCfg(void)
 {
-	uint8_t cfg_param[] = {0xe1,0x08,0x00};
   if(_type == DHT10)
-	    return i2cWriteBytes(cfg_param,sizeof(cfg_param));
+  {
+      uint8_t cfg_param[] = {0xe1,0x08,0x00};
+      return i2cWriteBytes(cfg_param,sizeof(cfg_param));
+  }
   else {
     SERIALPRINT.println("This function only support for DHT10");
     return 0;
@@ -282,12 +283,12 @@ int DHT::setSystemCfg(void)
  **/
 int DHT::readTargetData(uint32_t *data)
 {
-	uint8_t statu = 0;
-	uint8_t bytes[6] = {0};
-	uint8_t cfg_params[] ={0xac,0x33,0x00};
 	/* int ret = 0; unused */
 
   if(_type == DHT10){
+      uint8_t statu = 0;
+	uint8_t bytes[6] = {0};
+	uint8_t cfg_params[] ={0xac,0x33,0x00};
 
     if( i2cWriteBytes(cfg_params,sizeof(cfg_params)) ){
       return -1;
@@ -295,7 +296,7 @@ int DHT::readTargetData(uint32_t *data)
 
     delay(75);
     // check device busy flag， bit[7]:1 for busy, 0 for idle.
-    while(statu & (0x80 == 0x80)){
+    while(statu /* & (0x80 == 0x80) */ ){
       SERIALPRINT.println("Device busy!");
       delay(200);
       if(i2cReadByte(statu)){
@@ -332,10 +333,10 @@ int DHT::readTargetData(uint32_t *data)
  **/ 
 int DHT::DHT10Init(void)
 {
-	int ret = 0;
-	int cnt = 0;
-
-  if(_type == DHT10){
+  if(_type == DHT10)
+  {
+      int ret = 0;
+      int cnt = 0;
 
       delay(500);
       DHT10Reset();

@@ -7,7 +7,6 @@
 #include "eeprom_24c256.hpp"
 #include "DHT.h"
 #include "U8x8lib.h"
-#include "oled_input.hpp"
 
 /* pins */
 #define BUTTONS_ROW_1 A1
@@ -191,7 +190,7 @@ void loop()
     if (pressed_button != NONE)
     {
         digitalWrite(GREEN_LED, LOW);
-        unsigned long timestamp = millis();
+//        unsigned long timestamp = millis();
 //        while ( (millis() - timestamp) <= BUTTON_TIMEOUT)
 //        {
 //            /* code while wait */

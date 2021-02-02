@@ -6,7 +6,6 @@ eeprom_24c256::eeprom_24c256(uint8_t device_address)
   
 }
 
-
 void eeprom_24c256::init()
 {
   Wire.begin();
@@ -84,7 +83,7 @@ bool eeprom_24c256::read(unsigned address, byte * data, size_t len)
   Wire.beginTransmission(this->device_address);
 
   Wire.write( address >> 8 );
-  Wire.write( address & 0 );
+  Wire.write( address & 0xFF );
 
   byte transmission_status = Wire.endTransmission();
   if (transmission_status != 0)
