@@ -2,63 +2,77 @@
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
-      <df name="src">
-        <df name="clib">
-          <in>u8g2.h</in>
-          <in>u8g2_bitmap.c</in>
-          <in>u8g2_box.c</in>
-          <in>u8g2_buffer.c</in>
-          <in>u8g2_circle.c</in>
-          <in>u8g2_cleardisplay.c</in>
-          <in>u8g2_d_memory.c</in>
-          <in>u8g2_d_setup.c</in>
-          <in>u8g2_font.c</in>
-          <in>u8g2_fonts.c</in>
-          <in>u8g2_hvline.c</in>
-          <in>u8g2_input_value.c</in>
-          <in>u8g2_intersection.c</in>
-          <in>u8g2_kerning.c</in>
-          <in>u8g2_line.c</in>
-          <in>u8g2_ll_hvline.c</in>
-          <in>u8g2_message.c</in>
-          <in>u8g2_polygon.c</in>
-          <in>u8g2_selection_list.c</in>
-          <in>u8g2_setup.c</in>
-          <in>u8log.c</in>
-          <in>u8log_u8g2.c</in>
-          <in>u8log_u8x8.c</in>
-          <in>u8x8.h</in>
-          <in>u8x8_8x8.c</in>
-          <in>u8x8_byte.c</in>
-          <in>u8x8_cad.c</in>
-          <in>u8x8_capture.c</in>
-          <in>u8x8_d_ssd1306_128x64_noname.c</in>
-          <in>u8x8_debounce.c</in>
-          <in>u8x8_display.c</in>
-          <in>u8x8_fonts.c</in>
-          <in>u8x8_gpio.c</in>
-          <in>u8x8_input_value.c</in>
-          <in>u8x8_message.c</in>
-          <in>u8x8_selection_list.c</in>
-          <in>u8x8_setup.c</in>
-          <in>u8x8_string.c</in>
-          <in>u8x8_u16toa.c</in>
-          <in>u8x8_u8toa.c</in>
+      <df name="include">
+      </df>
+      <df name="lib">
+        <df name="DHT">
+          <df name="include">
+            <in>DHT.h</in>
+          </df>
+          <df name="src">
+            <in>DHT.cpp</in>
+          </df>
         </df>
-        <in>DHT.cpp</in>
-        <in>DHT.h</in>
-        <in>DS1307.cpp</in>
-        <in>DS1307.h</in>
-        <in>TM1637Display.cpp</in>
-        <in>TM1637Display.h</in>
-        <in>U8x8lib.cpp</in>
-        <in>U8x8lib.h</in>
-        <in>eeprom_24c256.cpp</in>
-        <in>eeprom_24c256.hpp</in>
+        <df name="DS1307">
+          <df name="include">
+            <in>DS1307.h</in>
+          </df>
+          <df name="src">
+            <in>DS1307.cpp</in>
+          </df>
+        </df>
+        <df name="eeprom_24c256">
+          <df name="include">
+            <in>eeprom_24c256.hpp</in>
+          </df>
+          <df name="src">
+            <in>eeprom_24c256.cpp</in>
+          </df>
+        </df>
+        <df name="segment_display">
+          <df name="include">
+            <in>segment_display.hpp</in>
+          </df>
+          <df name="src">
+            <in>segment_display.cpp</in>
+          </df>
+        </df>
+        <df name="TM1637Display">
+          <df name="include">
+            <in>TM1637Display.h</in>
+          </df>
+          <df name="src">
+            <in>TM1637Display.cpp</in>
+          </df>
+        </df>
+        <df name="U8g2">
+          <df name="include">
+            <df name="clib">
+              <in>u8g2.h</in>
+              <in>u8x8.h</in>
+            </df>
+            <in>U8g2lib.h</in>
+            <in>U8x8lib.h</in>
+          </df>
+          <df name="src">
+            <df name="clib">
+              <in>u8x8_8x8.c</in>
+              <in>u8x8_byte.c</in>
+              <in>u8x8_cad.c</in>
+              <in>u8x8_d_ssd1306_128x64_noname.c</in>
+              <in>u8x8_display.c</in>
+              <in>u8x8_fonts.c</in>
+              <in>u8x8_gpio.c</in>
+              <in>u8x8_input_value.c</in>
+              <in>u8x8_setup.c</in>
+            </df>
+            <in>U8g2lib.cpp</in>
+            <in>U8x8lib.cpp</in>
+          </df>
+        </df>
+      </df>
+      <df name="src">
         <in>main.ino</in>
-        <in>segment_display.cpp</in>
-        <in>segment_display.hpp</in>
-        <in>u8x8.h</in>
       </df>
       <in>platformio.ini</in>
     </df>
