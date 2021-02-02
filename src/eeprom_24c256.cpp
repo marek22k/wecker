@@ -38,7 +38,7 @@ bool eeprom_24c256::read(unsigned address, byte * data)
   if (transmission_status != 0)
     return false;
 
-  Wire.requestFrom(this->device_address, (uint8_t) 2);
+  Wire.requestFrom(this->device_address, (size_t) 2);
 
   if (! Wire.available())
     return false;
@@ -89,7 +89,7 @@ bool eeprom_24c256::read(unsigned address, byte * data, size_t len)
   if (transmission_status != 0)
     return false;
 
-  Wire.requestFrom(this->device_address, (uint8_t) len);
+  Wire.requestFrom(this->device_address, (size_t) len);
 
   for (size_t i = 0; i < len; i++)
   {
